@@ -1,0 +1,30 @@
+[
+    {
+        "name": "talxis_name",
+        "displayName": "Custom Name",
+        "visualSizeFactor": 180,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "talxis_column__virtual",
+        "displayName": "Virtual OptionSet",
+        "dataType": "OptionSet",
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Label": "Option 1",
+                    "Value": 1,
+                    "Color": "#1A3C34"
+                },
+                {
+                    "Label": "Option 2",
+                    "Value": 2,
+                    "Color": "#FF6F61"
+                }
+            ]
+        }
+    }
+]

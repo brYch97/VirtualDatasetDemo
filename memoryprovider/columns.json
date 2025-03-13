@@ -1,0 +1,298 @@
+[
+    {
+        "name": "text",
+        "alias": "text",
+        "dataType": "SingleLine.Text",
+        "displayName": "Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "isPrimary": true,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "multilinetext",
+        "alias": "multilinetext",
+        "dataType": "Multiple",
+        "displayName": "Multiline Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "mail",
+        "alias": "mail",
+        "dataType": "SingleLine.Email",
+        "displayName": "Mail",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "phone",
+        "alias": "phone",
+        "dataType": "SingleLine.Phone",
+        "displayName": "Phone",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "url",
+        "alias": "url",
+        "dataType": "SingleLine.URL",
+        "displayName": "Url",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "lookup",
+        "alias": "lookup",
+        "dataType": "Lookup.Simple",
+        "displayName": "Lookup",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "Targets": [
+                "talxis_field"
+            ]
+        }
+    },
+    {
+        "name": "twooptions",
+        "alias": "twooptions",
+        "dataType": "TwoOptions",
+        "displayName": "Two Options",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Label": "Yes",
+                    "Value": 1,
+                    "Color": ""
+                },
+                {
+                    "Label": "No",
+                    "Value": 0,
+                    "Color": ""
+                }
+            ]
+        }
+    },
+    {
+        "name": "twooptionscolorful",
+        "alias": "twooptionscolorful",
+        "dataType": "TwoOptions",
+        "displayName": "Two Options Colorful",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Label": "Yes",
+                    "Value": 1,
+                    "Color": "green"
+                },
+                {
+                    "Label": "No",
+                    "Value": 0,
+                    "Color": "red"
+                }
+            ]
+        }
+    },
+    {
+        "name": "optionset",
+        "alias": "optionset",
+        "dataType": "OptionSet",
+        "displayName": "OptionSet",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Color": "",
+                    "Label": "Option 1",
+                    "Value": 1
+                },
+                {
+                    "Color": "",
+                    "Label": "Option 2",
+                    "Value": 2
+                }
+            ]
+        }
+    },
+    {
+        "name": "optionsetcolorful",
+        "alias": "optionsetcolorful",
+        "dataType": "OptionSet",
+        "displayName": "OptionSet Colorful",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Color": "#4B3F72",
+                    "Label": "Option 1",
+                    "Value": 1
+                },
+                {
+                    "Color": "blue",
+                    "Label": "Option 2",
+                    "Value": 2
+                }
+            ]
+        }
+    },
+    {
+        "name": "multiselectoptionset",
+        "alias": "multiselectoptionset",
+        "dataType": "MultiSelectPicklist",
+        "displayName": "MultiSelectOptionSet",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Color": "",
+                    "Label": "Option 1",
+                    "Value": 1
+                },
+                {
+                    "Color": "",
+                    "Label": "Option 2",
+                    "Value": 2
+                }
+            ]
+        }
+    },
+    {
+        "name": "multiselectoptionsetcolorful",
+        "alias": "multiselectoptionsetcolorful",
+        "dataType": "MultiSelectPicklist",
+        "displayName": "MultiSelectOptionSet Colorful",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true,
+            "OptionSet": [
+                {
+                    "Color": "#4B3F72",
+                    "Label": "Option 1",
+                    "Value": 1
+                },
+                {
+                    "Color": "blue",
+                    "Label": "Option 2",
+                    "Value": 2
+                }
+            ]
+        }
+    },
+    {
+        "name": "number",
+        "alias": "number",
+        "dataType": "Whole.None",
+        "displayName": "Number",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "decimal",
+        "alias": "decimal",
+        "dataType": "Decimal",
+        "displayName": "Decimal",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "currency",
+        "alias": "currency",
+        "dataType": "Currency",
+        "displayName": "Currency",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "dateonly",
+        "alias": "dateonly",
+        "dataType": "DateAndTime.DateOnly",
+        "displayName": "Date Only",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "datetime",
+        "alias": "datetime",
+        "dataType": "DateAndTime.DateAndTime",
+        "displayName": "Date Time",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "duration",
+        "alias": "duration",
+        "dataType": "Whole.Duration",
+        "displayName": "Duration",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "file",
+        "alias": "file",
+        "dataType": "File",
+        "displayName": "File",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "image",
+        "alias": "image",
+        "dataType": "Image",
+        "displayName": "Image",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    }
+]
