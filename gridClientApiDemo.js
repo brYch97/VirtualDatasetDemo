@@ -11,6 +11,8 @@ const CELL_DYNAMIC_HEIGHT_CONTROL_NAME = 'talxis_clientapicelldynamicheight';
 const CELL_CUSTOMIZER_CONTROL_NAME = 'talxis_clientapicellcustomizers';
 const CELL_ONE_CLICK_EDIT_CONTROL_NAME = 'talxis_clientapicelloneclickedit';
 const CELL_CUSTOMIZER_ASYNC_CONTROL_NAME = 'talxis_clientapicellasynccustomizer';
+const ADVANCED_GRID_CONTROL_NAME = 'Subgrid_new_1';
+
 
 const CELL_CUSTOMIZER = {
     controls: [{
@@ -25,6 +27,10 @@ const CELL_CUSTOMIZER_ASYNC = {
         appliesTo: 'renderer',
         name: 'talxis_TALXIS.PCF.AsyncCellRenderer'
     }]
+}
+
+function hideRibbonButton() {
+    return false;
 }
 
 
@@ -44,6 +50,7 @@ function onFormLoad(executionContext) {
     const cellCustomizerControl = formContext.getControl(CELL_CUSTOMIZER_CONTROL_NAME);
     const cellOneClickEditControl = formContext.getControl(CELL_ONE_CLICK_EDIT_CONTROL_NAME);
     const cellCustomizerAsyncControl = formContext.getControl(CELL_CUSTOMIZER_ASYNC_CONTROL_NAME);
+    const talxisGridControl = formContext.getControl(ADVANCED_GRID_CONTROL_NAME);
 
     registerControl(memoryProviderControl, [registerGeneralEvents]);
     registerControl(columnsInterceptorControl, [registerGeneralEvents, registerColumnsInterceptorEvents])
@@ -58,12 +65,36 @@ function onFormLoad(executionContext) {
     registerControl(cellCustomizerControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER)]);
     registerControl(cellOneClickEditControl, [registerGeneralEvents, registerCellOneClickEditEvents]);
     registerControl(cellCustomizerAsyncControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER_ASYNC, false), registerAsyncCellRendererEvents])
+    registerControl(talxisGridControl, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events]);
 
+}
+
+function onMainGridLoad(primaryControl) {
+    const viewId = primaryControl.getViewSelector().getCurrentView().id;
+    const dataset = window.Xrm[`talxis_grid_${primaryControl.getGrid().pageId}`];
+    if(viewId === '{0B6CFAE4-170B-F011-BAE2-0022489B5E99}') {
+        registerTalxisGridDemo1Events(dataset);
+    }
+    if(viewId === '{9C330878-AD0B-F011-BAE1-0022489B5E99}') {
+        registerTalxisGridDemo2Events(dataset);
+    }
 }
 
 const registerControl = (control, registerCallbacks) => {
     control.addOnOutputChange(() => {
-        const dataset = control.getOutputs()[`${control.getName()}.fieldControl.DatasetControl`].value;
+        const isDatasetControl = control.getControlType().startsWith('customsubgrid:');
+        const viewId = control.getViewSelector?.().getCurrentView().id;
+        const dataset = control.getOutputs()[`${control.getName()}${isDatasetControl ? '' : '.fieldControl'}.DatasetControl`].value;
+
+        if(isDatasetControl) {
+            if(viewId === '{0B6CFAE4-170B-F011-BAE2-0022489B5E99}') {
+                registerCallbacks[0](dataset);
+            }
+            if(viewId === '{9C330878-AD0B-F011-BAE1-0022489B5E99}') {
+                registerCallbacks[1](dataset);
+            }
+            return;
+        }
         registerCallbacks.map(callback => callback(dataset))
     })
 }
@@ -116,7 +147,7 @@ const registerDynamicCellValuesEvents = (dataset) => {
             return valueA + valueB;
         })
         record.expressions.setFormattedValueExpression('text', (defaultFormattedValue) => {
-            if(!defaultFormattedValue) {
+            if (!defaultFormattedValue) {
                 return defaultFormattedValue;
             }
             return `${getEmojiFromString(defaultFormattedValue)} ${defaultFormattedValue}`
@@ -164,31 +195,7 @@ const registerDynamicCellHeightEvents = (dataset) => {
     });
     dataset.addEventListener('onRecordLoaded', (record) => {
         record.expressions?.ui.setHeightExpression('multilinetext', (columnWidth, rowHeight) => {
-            const value = record.getValue('multilinetext') ?? "";
-            const length = value.length;
-            let minHeight = rowHeight;
-            let maxHeight = 200;
-            if (length === 0) {
-                return rowHeight;
-            }
-            const avgCharWidth = 14 * 0.5;
-
-            // Calculate the max number of characters that fit in one line
-            const charsPerLine = Math.floor(columnWidth / avgCharWidth);
-
-            // Calculate the number of lines needed
-            const numLines = Math.ceil(value.length / charsPerLine);
-
-            // Calculate the height based on the number of lines
-            const lineHeight = 14 * 1.5;
-            let totalHeight = numLines * lineHeight;
-            if (totalHeight < minHeight) {
-                totalHeight = minHeight;
-            }
-            if (totalHeight > maxHeight) {
-                totalHeight = maxHeight
-            }
-            return Math.ceil(totalHeight);
+            return getRowHeight(record.getValue('multilinetext'), columnWidth, rowHeight);
         })
     })
 }
@@ -210,7 +217,7 @@ const registerCellFormattingEvents = (dataset, overrides, useCustomFormatting = 
     })
     dataset.addEventListener('onRecordLoaded', (record) => {
         record.expressions.ui.setCustomFormattingExpression("color", () => {
-            if(!useCustomFormatting) {
+            if (!useCustomFormatting) {
                 return;
             }
             const color = record.getValue('color');
@@ -223,35 +230,25 @@ const registerCellFormattingEvents = (dataset, overrides, useCustomFormatting = 
                     fonts: {
                         medium: {
                             fontFamily: 'Consolas, monaco, monospace',
-                            fontWeight: 600
                         }
                     },
                 }
             };
         });
         record.expressions.ui.setCustomFormattingExpression('number', (defaultCellTheme) => {
-            if(!useCustomFormatting) {
+            if (!useCustomFormatting) {
                 return;
             }
             const value = record.getValue('number');
-            const themeOverride = {
-                fonts: {
-                    medium: {
-                        fontWeight: 600
-                    }
-                },
-            }
             if (value <= 0) {
                 return {
                     backgroundColor: defaultCellTheme.semanticColors.errorBackground,
                     textColor: defaultCellTheme.semanticColors.errorText,
-                    themeOverride: themeOverride
                 }
             }
             return {
                 backgroundColor: defaultCellTheme.semanticColors.successBackground,
                 textColor: defaultCellTheme.semanticColors.successIcon,
-                themeOverride: themeOverride
             }
         })
     })
@@ -541,6 +538,90 @@ const registerGeneralEvents = (dataset) => {
     })
 }
 
+const registerTalxisGridDemo1Events = (dataset) => {
+    dataset.setInterceptor('columns', (columns) => {
+        const columnsMap = new Map(columns.map(col => [col.name, col]));
+        [...columnsMap.values()]
+        columnsMap.set('talxis_sum__virtual', {
+            name: 'talxis_sum__virtual',
+            displayName: 'Sum',
+            dataType: 'Decimal'
+        })
+        columnsMap.set('_talxis_gridRibbonButtons', {
+            name: '_talxis_gridRibbonButtons',
+            displayName: 'Inline Ribbon',
+            visualSizeFactor: 400
+        })
+        return [...columnsMap.values()];
+    })
+    dataset.addEventListener('onRecordLoaded', (record) => {
+        const getNumber = (value) => {
+            try {
+                return parseFloat(value)
+            }
+            catch (err) {
+                return 0;
+            }
+        }
+        record.expressions.setValueExpression('talxis_sum__virtual', () => {
+            return getNumber(record.getValue('talxis_wholenone')) + getNumber(record.getValue('talxis_decimal'));
+        })
+        record.expressions.ui.setCustomFormattingExpression('talxis_sum__virtual', (theme) => {
+            const value = record.getValue('talxis_sum__virtual');
+            return {
+                backgroundColor: getColorBasedOnValue(getNumber(value), theme),
+            }
+        })
+        record.expressions.ui.setHeightExpression('talxis_multiple', (columnWidth, rowHeight) => {
+            return getRowHeight(record.getValue('talxis_multiple'), columnWidth, rowHeight);
+        })
+        record.expressions.ui.setCustomControlsExpression('talxis_singlelineemail', (controls) => {
+            return [{
+                appliesTo: "editor",
+                name: "talxis_TALXIS.PCF.EmailPicker",
+            }]
+        })
+        record.expressions.ui.setControlParametersExpression('_talxis_gridRibbonButtons', (defaultParameters) => {
+            return {
+                ...defaultParameters,
+                RecordCommands: {
+                    ...defaultParameters.RecordCommands,
+                    raw: defaultParameters.RecordCommands?.raw?.filter(command => {
+                        //cover cases for both subgrid and homepage grid
+                        let id = command.commandButtonId.replace('HomepageGrid', 'SubGrid');
+                        switch(id) {
+                            case 'Mscrm.SubGrid.talxis_field.Edit':
+                            case 'Mscrm.SubGrid.talxis_field.Deactivate':
+                            case 'Mscrm.SubGrid.talxis_field.Delete':
+                            case 'Mscrm.SubGrid.talxis_field.Assign':
+                            case 'Mscrm.SubGrid.talxis_field.Sharing':
+                            case 'Mscrm.SubGrid.talxis_field.SendSelected': {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                }
+            }
+            return defaultParameters;
+        })
+    })
+}
+
+const registerTalxisGridDemo2Events = (dataset) => {
+    dataset.filtering.setFilter({
+        filterOperator: 0,
+        conditions: [
+            {
+                attributeName: 'talxis_name',
+                conditionOperator: 56,
+                value: '%11'
+            }
+        ]
+    })
+
+}
+
 const getDemoColumnsMap = (columns) => {
     const columnsToInclude = ['text', 'number', 'decimal'];
     const newColumns = columns.filter(x => columnsToInclude.includes(x.name));
@@ -567,4 +648,45 @@ const getEmojiFromString = (inputString = '') => {
     return emojis[index];
 };
 
-//Cell customizers provide a flexible way to modify or entirely replace the controls used for rendering cells. Depending on the specific customization requirements, you can choose from various levels of customization to suit your needs.
+const getColorBasedOnValue = (value, theme) => {
+
+    // Excel-like thresholds: 0 (red), 10M (yellow), 20M (green)
+    if (value <= 10000000) {
+        // Red for 0 to 10M (#FF0000)
+        return theme.semanticColors.errorBackground;
+    } else if (value <= 20000000) {
+        // Yellow for 10M to 20M (#FFFF00)
+        return theme.semanticColors.warningBackground;
+    } else {
+        // Green for 20M (#00FF00) - though capped, included for clarity
+        return theme.semanticColors.successBackground;
+    }
+};
+
+const getRowHeight = (value, columnWidth, rowHeight) => {
+    value = value ?? "";
+    const length = value.length;
+    let minHeight = rowHeight;
+    let maxHeight = 200;
+    if (length === 0) {
+        return rowHeight;
+    }
+    const avgCharWidth = 14 * 0.5;
+
+    // Calculate the max number of characters that fit in one line
+    const charsPerLine = Math.floor(columnWidth / avgCharWidth);
+
+    // Calculate the number of lines needed
+    const numLines = Math.ceil(value.length / charsPerLine);
+
+    // Calculate the height based on the number of lines
+    const lineHeight = 14 * 1.5;
+    let totalHeight = numLines * lineHeight;
+    if (totalHeight < minHeight) {
+        totalHeight = minHeight;
+    }
+    if (totalHeight > maxHeight) {
+        totalHeight = maxHeight
+    }
+    return Math.ceil(totalHeight);
+}
