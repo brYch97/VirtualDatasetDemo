@@ -65,33 +65,45 @@ function onFormLoad(executionContext) {
     registerControl(cellCustomizerControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER)]);
     registerControl(cellOneClickEditControl, [registerGeneralEvents, registerCellOneClickEditEvents]);
     registerControl(cellCustomizerAsyncControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER_ASYNC, false), registerAsyncCellRendererEvents])
-    registerControl(talxisGridControl, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events]);
+    registerControl(talxisGridControl, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events, registerTalxisGridDemo3Events]);
 
 }
 
 function onMainGridLoad(primaryControl) {
-    const viewId = primaryControl.getViewSelector().getCurrentView().id;
+    const viewId = sanitizeGuid(primaryControl.getViewSelector().getCurrentView().id);
     const dataset = window.Xrm[`talxis_grid_${primaryControl.getGrid().pageId}`];
-    if(viewId === '{0B6CFAE4-170B-F011-BAE2-0022489B5E99}') {
+    if(viewId === '0b6cfae4-170b-f011-bae2-0022489b5e99') {
         registerTalxisGridDemo1Events(dataset);
     }
-    if(viewId === '{9C330878-AD0B-F011-BAE1-0022489B5E99}') {
+    if(viewId === '9c330878-ad0b-f011-bae1-0022489b5e99') {
         registerTalxisGridDemo2Events(dataset);
+    }
+    if(viewId === 'b73dfe2f-702a-f011-8c4d-0022489b5e99') {
+        registerTalxisGridDemo3Events(dataset);
+    }
+    if(viewId === 'a4bb2b0c-7d2a-f011-8c4d-0022489b5e99') {
+        registerTalxisGridDemo3Events(dataset, true);
     }
 }
 
 const registerControl = (control, registerCallbacks) => {
     control.addOnOutputChange(() => {
         const isDatasetControl = control.getControlType().startsWith('customsubgrid:');
-        const viewId = control.getViewSelector?.().getCurrentView().id;
         const dataset = control.getOutputs()[`${control.getName()}${isDatasetControl ? '' : '.fieldControl'}.DatasetControl`].value;
 
         if(isDatasetControl) {
-            if(viewId === '{0B6CFAE4-170B-F011-BAE2-0022489B5E99}') {
+            const viewId = sanitizeGuid(control.getViewSelector?.().getCurrentView().id);
+            if(viewId === '0b6cfae4-170b-f011-bae2-0022489b5e99') {
                 registerCallbacks[0](dataset);
             }
-            if(viewId === '{9C330878-AD0B-F011-BAE1-0022489B5E99}') {
+            if(viewId === '9c330878-ad0b-f011-bae1-0022489b5e99') {
                 registerCallbacks[1](dataset);
+            }
+            if(viewId === 'b73dfe2f-702a-f011-8c4d-0022489b5e99') {
+                registerCallbacks[2](dataset);
+            }
+            if(viewId === 'a4bb2b0c-7d2a-f011-8c4d-0022489b5e99') {
+                registerCallbacks[2](dataset, true);
             }
             return;
         }
@@ -541,7 +553,6 @@ const registerGeneralEvents = (dataset) => {
 const registerTalxisGridDemo1Events = (dataset) => {
     dataset.setInterceptor('columns', (columns) => {
         const columnsMap = new Map(columns.map(col => [col.name, col]));
-        [...columnsMap.values()]
         columnsMap.set('talxis_sum__virtual', {
             name: 'talxis_sum__virtual',
             displayName: 'Sum',
@@ -552,8 +563,14 @@ const registerTalxisGridDemo1Events = (dataset) => {
             displayName: 'Inline Ribbon',
             visualSizeFactor: 400
         })
-        return [...columnsMap.values()];
-    })
+        //always keep the columns at the end
+        return [...columnsMap.values()].sort((a, b) => {
+            const aScore = a.name === '_talxis_gridRibbonButtons' ? 2 : a.name === 'talxis_sum__virtual' ? 1 : 0;
+            const bScore = b.name === '_talxis_gridRibbonButtons' ? 2 : b.name === 'talxis_sum__virtual' ? 1 : 0;
+            return aScore - bScore;
+        });
+    });
+
     dataset.addEventListener('onRecordLoaded', (record) => {
         const getNumber = (value) => {
             try {
@@ -575,35 +592,35 @@ const registerTalxisGridDemo1Events = (dataset) => {
         record.expressions.ui.setHeightExpression('talxis_multiple', (columnWidth, rowHeight) => {
             return getRowHeight(record.getValue('talxis_multiple'), columnWidth, rowHeight);
         })
-        record.expressions.ui.setCustomControlsExpression('talxis_singlelineemail', (controls) => {
+        record.expressions.ui.setCustomControlsExpression('talxis_singlelinephone', (controls) => {
             return [{
                 appliesTo: "editor",
-                name: "talxis_TALXIS.PCF.EmailPicker",
+                name: "talxis_TALXIS.PCF.PhonePicker",
+                bindings: {
+                    verificationFeature: {
+                        isStatic: true,
+                        value: "1"
+                    }
+                }
             }]
         })
-        record.expressions.ui.setControlParametersExpression('_talxis_gridRibbonButtons', (defaultParameters) => {
+        record.expressions.setFormattedValueExpression('talxis_singlelinephone', defaultFormattedValue => {
+            if(!defaultFormattedValue) {
+                return defaultFormattedValue;
+            }
+            return JSON.parse(defaultFormattedValue).phoneNumber;
+        });
+        record.expressions.ui.setControlParametersExpression('talxis_singlelinephone', (defaultParameters) => {
+            if(!defaultParameters.value.raw) {
+                return defaultParameters
+            }
             return {
                 ...defaultParameters,
-                RecordCommands: {
-                    ...defaultParameters.RecordCommands,
-                    raw: defaultParameters.RecordCommands?.raw?.filter(command => {
-                        //cover cases for both subgrid and homepage grid
-                        let id = command.commandButtonId.replace('HomepageGrid', 'SubGrid');
-                        switch(id) {
-                            case 'Mscrm.SubGrid.talxis_field.Edit':
-                            case 'Mscrm.SubGrid.talxis_field.Deactivate':
-                            case 'Mscrm.SubGrid.talxis_field.Delete':
-                            case 'Mscrm.SubGrid.talxis_field.Assign':
-                            case 'Mscrm.SubGrid.talxis_field.Sharing':
-                            case 'Mscrm.SubGrid.talxis_field.SendSelected': {
-                                return true;
-                            }
-                        }
-                        return false;
-                    })
+                value: {
+                    ...defaultParameters.value,
+                    raw: JSON.parse(defaultParameters.value.raw).phoneNumber
                 }
             }
-            return defaultParameters;
         })
     })
 }
@@ -618,6 +635,38 @@ const registerTalxisGridDemo2Events = (dataset) => {
                 value: '%11'
             }
         ]
+    })
+
+}
+
+const registerTalxisGridDemo3Events = (dataset, fullyCustom) => {
+    dataset.setInterceptor('columns', (columns) => {
+        const columnsMap = new Map(columns.map(col => [col.name, col]));
+        columnsMap.set('_talxis_gridRibbonButtons', {
+            name: '_talxis_gridRibbonButtons',
+            displayName: 'Inline Ribbon',
+            visualSizeFactor: 400
+        })
+        //always keep the columns at the end
+        return [...columnsMap.values()].sort((a, b) => {
+            const aScore = a.name === '_talxis_gridRibbonButtons' ? 2 : a.name === 'talxis_sum__virtual' ? 1 : 0;
+            const bScore = b.name === '_talxis_gridRibbonButtons' ? 2 : b.name === 'talxis_sum__virtual' ? 1 : 0;
+            return aScore - bScore;
+        });
+    })
+    dataset.addEventListener('onRecordLoaded', (record) => {
+        record.expressions.ui.setCustomControlsExpression('_talxis_gridRibbonButtons', (controls) => {
+            return [{
+                appliesTo: "renderer",
+                name: "talxis_TALXIS.PCF.CustomRibbonDemo",
+                bindings: {
+                    Type: {
+                        isStatic: true,
+                        value: fullyCustom ? 'custom' : null
+                    }
+                }
+            }]
+        })
     })
 
 }
@@ -689,4 +738,7 @@ const getRowHeight = (value, columnWidth, rowHeight) => {
         totalHeight = maxHeight
     }
     return Math.ceil(totalHeight);
+}
+const sanitizeGuid = (guid) => {
+    return guid?.replace?.("{", "")?.replace?.("}", "")?.toLowerCase?.() ?? "";
 }
