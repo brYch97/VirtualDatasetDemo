@@ -12,7 +12,7 @@ const CELL_CUSTOMIZER_CONTROL_NAME = 'talxis_clientapicellcustomizers';
 const CELL_ONE_CLICK_EDIT_CONTROL_NAME = 'talxis_clientapicelloneclickedit';
 const CELL_CUSTOMIZER_ASYNC_CONTROL_NAME = 'talxis_clientapicellasynccustomizer';
 const ADVANCED_GRID_CONTROL_NAME = 'Subgrid_new_1';
-
+const ADVANCED_GRID_CONTROL_NAME_FULL_TAB = 'Subgrid_new_2';
 
 const CELL_CUSTOMIZER = {
     controls: [{
@@ -51,6 +51,7 @@ function onFormLoad(executionContext) {
     const cellOneClickEditControl = formContext.getControl(CELL_ONE_CLICK_EDIT_CONTROL_NAME);
     const cellCustomizerAsyncControl = formContext.getControl(CELL_CUSTOMIZER_ASYNC_CONTROL_NAME);
     const talxisGridControl = formContext.getControl(ADVANCED_GRID_CONTROL_NAME);
+    const talxisGridControlFullTab = formContext.getControl(ADVANCED_GRID_CONTROL_NAME_FULL_TAB);
 
     registerControl(memoryProviderControl, [registerGeneralEvents]);
     registerControl(columnsInterceptorControl, [registerGeneralEvents, registerColumnsInterceptorEvents])
@@ -66,6 +67,7 @@ function onFormLoad(executionContext) {
     registerControl(cellOneClickEditControl, [registerGeneralEvents, registerCellOneClickEditEvents]);
     registerControl(cellCustomizerAsyncControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER_ASYNC, false), registerAsyncCellRendererEvents])
     registerControl(talxisGridControl, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events, registerTalxisGridDemo3Events]);
+    registerControl(talxisGridControlFullTab, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events, registerTalxisGridDemo3Events]);
 
 }
 
@@ -563,6 +565,10 @@ const registerTalxisGridDemo1Events = (dataset) => {
             displayName: 'Inline Ribbon',
             visualSizeFactor: 400
         })
+        columnsMap.set('talxis_singlelinephone', {
+            ...columnsMap.get('talxis_singlelinephone'),
+            displayName: 'SingleLine.Phone (Custom PCF)'
+        })
         //always keep the columns at the end
         return [...columnsMap.values()].sort((a, b) => {
             const aScore = a.name === '_talxis_gridRibbonButtons' ? 2 : a.name === 'talxis_sum__virtual' ? 1 : 0;
@@ -588,9 +594,6 @@ const registerTalxisGridDemo1Events = (dataset) => {
             return {
                 backgroundColor: getColorBasedOnValue(getNumber(value), theme),
             }
-        })
-        record.expressions.ui.setHeightExpression('talxis_multiple', (columnWidth, rowHeight) => {
-            return getRowHeight(record.getValue('talxis_multiple'), columnWidth, rowHeight);
         })
         record.expressions.ui.setCustomControlsExpression('talxis_singlelinephone', (controls) => {
             return [{
