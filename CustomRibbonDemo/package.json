@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@fluentui/react": "8.121.5",
-    "@talxis/base-controls": "^1.2505.5",
-    "@talxis/client-libraries": "^1.2505.1",
+    "@talxis/base-controls": "/Users/dominikbrych/Desktop/NETWORG/INT0015-BaseControls",
+    "@talxis/client-libraries": "/Users/dominikbrych/Desktop/NETWORG/INT0014/src/SDK/ClientLibraries",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

@@ -1,25 +1,26 @@
+
+//@ts-nocheck
 import { PrimaryButton, ThemeProvider } from "@fluentui/react"
 import { useControlTheme } from "@talxis/base-controls";
-import { ICommand } from "@talxis/client-libraries";
 import * as React from "react";
 import { getCustomButtonsStyles } from "./styles";
 
 interface ICustomButtonsProps {
-    commands: ICommand[];
+    items: ICommandBarItemProps[];
     context: ComponentFramework.Context<any, any>;
 }
 
 export const CustomButtons = (props: ICustomButtonsProps) => {
-    const { context, commands } = props;
+    const { context, items } = {...props};
     const theme = useControlTheme(context.fluentDesignLanguage);
     const styles = React.useMemo(() => getCustomButtonsStyles(context.mode.allocatedHeight), [context.mode.allocatedHeight]);
     return <ThemeProvider className={styles.customButtonsRoot} theme={theme}>
-        {commands.map(command => {
+        {items.map(command => {
             return <PrimaryButton
-                key={command.commandId}
-                disabled={!command.canExecute}
-                onClick={() => command.execute()} 
-                text={command.label} />
+                key={command.key}
+                disabled={command.disabled}
+                onClick={command.onClick}
+                text={command.text} />
         })}
     </ThemeProvider>
 }
