@@ -40,6 +40,14 @@ const CELL_CUSTOMIZER_ASYNC = {
         name: 'talxis_TALXIS.PCF.AsyncCellRenderer'
     }]
 }
+let _resolveFormContext = null;
+const formContextPromise = new Promise((resolve) => {
+    _resolveFormContext = resolve;
+})
+
+function onLoad(formContext) {
+    _resolveFormContext(formContext);
+}
 
 function onDatasetControlInitialized(parameters) {
     const { controlId, dataset } = parameters;
@@ -130,6 +138,10 @@ function onDatasetControlInitialized(parameters) {
             break;
         }
     }
+    (async () => {
+        const formContext = await formContextPromise;
+        console.log(formContext);
+    })();
 }
 
 const registerInlineRibbonEvents = (dataset) => {
