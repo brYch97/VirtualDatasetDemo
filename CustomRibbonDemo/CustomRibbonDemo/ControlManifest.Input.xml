@@ -19,8 +19,10 @@
     </external-service-usage>
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <property name="sampleProperty" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="SingleLine.Text" usage="bound" required="true" />
+    <property name="Record" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="Object" usage="input" required="true" />
+    <property name="Dataset" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="Object" usage="input" required="true" />
+    <property name="CommandButtonIds" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="SingleLine.Text" usage="input" required="true" />
     <property name="Type" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="SingleLine.Text" usage="input" required="true" />
-    <property name="RecordCommands" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="Object" usage="input" required="true" />
     <!--
       Property node's of-type attribute can be of-type-group attribute.
       Example:

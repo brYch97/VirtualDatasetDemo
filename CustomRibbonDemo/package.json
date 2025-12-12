@@ -14,8 +14,9 @@
   },
   "dependencies": {
     "@fluentui/react": "8.121.5",
-    "@talxis/base-controls": "^1.2505.5",
-    "@talxis/client-libraries": "^1.2505.1",
+    "@talxis/base-controls": "1.2512.1",
+    "@talxis/client-libraries": "1.2512.2",
+    "@talxis/react-components": "1.2505.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

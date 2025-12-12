@@ -1,9 +1,9 @@
-import { GridCellRenderer } from "@talxis/base-controls/dist/components/GridCellRenderer";
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import { mergeStyles } from "@fluentui/react";
 import { CustomButtons } from "./CustomButtons/CustomButtons";
+import { GridInlineRibbon, IGridInlineRibbon } from "@talxis/base-controls";
 
 export class CustomRibbonDemo implements ComponentFramework.StandardControl<IInputs, IOutputs> {
     private _container: HTMLDivElement;
@@ -34,42 +34,51 @@ export class CustomRibbonDemo implements ComponentFramework.StandardControl<IInp
      * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
      */
     public updateView(context: ComponentFramework.Context<IInputs>): void {
-        const that = this;
-        if(context.parameters.Type?.raw === 'custom') {
-            return ReactDOM.render(React.createElement(CustomButtons, {
-                context: context,
-                commands: context.parameters.RecordCommands.raw
-            }), this._container)
-        }
-        return ReactDOM.render(React.createElement(GridCellRenderer, {
-                context: context,
-                parameters: context.parameters as any,
-                onOverrideComponentProps(props) {
-                    return {
-                        ...props,
-                        onGetRecordCommandsProps: (props) => {
-                            return {
-                                ...props,
-                                commandBarProps: {
-                                    ...props.commandBarProps,
-                                    items: props.commandBarProps.items.map((item) => {
-                                        return {
-                                            ...item,
-                                            iconProps: {},
-                                            className: mergeStyles({
-                                                '.ms-Button-label': {
-                                                    fontWeight: 600
-                                                }
-                                            }),
-                                            text: `${that._getEmojiFromString(item.text!)} ${item.text}`,
-                                        };
-                                    }),
-                                }
+        ReactDOM.render(React.createElement(GridInlineRibbon, {
+            context: context,
+            parameters: {
+                Record: context.parameters.Record,
+                CommandButtonIds: context.parameters.CommandButtonIds,
+                Dataset: context.parameters.Dataset
+            },
+            onOverrideComponentProps: (props) => {
+                return {
+                    onRender: (props, defaultRender) => {
+                        return defaultRender({
+                            ...props,
+                            onRenderRibbon: (props, defaultRender) => {
+                                return defaultRender({
+                                    ...props,
+                                    onRenderCommandBar: (props, defaultRender) => {
+                                        if(context.parameters.Type?.raw === 'custom') {
+                                            return React.createElement(CustomButtons, {
+                                                context: context,
+                                                items: props.items
+                                            })
+                                        }
+                                        return defaultRender({
+                                            ...props,
+                                            items: props.items.map((item) => {
+                                                return {
+                                                    ...item,
+                                                    iconProps: {},
+                                                    className: mergeStyles({
+                                                        '.ms-Button-label': {
+                                                            fontWeight: 600
+                                                        }
+                                                    }),
+                                                    text: `${this._getEmojiFromString(item.text!)} ${item.text}`,
+                                                };
+                                            })
+                                        })
+                                    }
+                                });
                             }
-                        }
+                        })
                     }
-                },
-            }), this._container);
+                }
+            }
+        } as IGridInlineRibbon), this._container)
     }
 
     /**
