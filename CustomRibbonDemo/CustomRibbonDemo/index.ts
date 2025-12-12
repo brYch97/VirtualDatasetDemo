@@ -38,7 +38,8 @@ export class CustomRibbonDemo implements ComponentFramework.StandardControl<IInp
             context: context,
             parameters: {
                 Record: context.parameters.Record,
-                CommandButtonIds: context.parameters.CommandButtonIds
+                CommandButtonIds: context.parameters.CommandButtonIds,
+                Dataset: context.parameters.Dataset
             },
             onOverrideComponentProps: (props) => {
                 return {

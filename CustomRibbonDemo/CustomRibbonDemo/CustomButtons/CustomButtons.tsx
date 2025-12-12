@@ -1,9 +1,9 @@
 
-//@ts-nocheck
 import { PrimaryButton, ThemeProvider } from "@fluentui/react"
 import { useControlTheme } from "@talxis/base-controls";
 import * as React from "react";
 import { getCustomButtonsStyles } from "./styles";
+import { ICommandBarItemProps } from "@talxis/react-components";
 
 interface ICustomButtonsProps {
     items: ICommandBarItemProps[];
@@ -19,7 +19,7 @@ export const CustomButtons = (props: ICustomButtonsProps) => {
             return <PrimaryButton
                 key={command.key}
                 disabled={command.disabled}
-                onClick={command.onClick}
+                onClick={() => command.onClick?.()}
                 text={command.text} />
         })}
     </ThemeProvider>

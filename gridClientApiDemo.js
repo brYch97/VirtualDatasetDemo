@@ -1,17 +1,24 @@
-const MEMORY_PROVIDER_CONTROL = 'talxis_memorybindingfield';
-const COLUMNS_INTERCEPTOR_CONTROL_NAME = 'talxis_talxis_columnsinterceptorbindingfield';
-const DYNAMIC_CELL_VALUES_CONTROL_NAME = 'talxis_clientapidynamiccellvalues';
-const CELL_VALIDATION_CONTROL_NAME = 'talxis_clientapicellvalidation';
-const CELL_DISABLING_CONTROL_NAME = 'talxis_clientapicelldisabling';
-const CELL_NOTIFICATIONS_CONTROL_NAME = 'talxis_clientapicellnotifications';
-const CELL_LOADING_CONTROL_NAME = 'talxis_clientapicellloading';
-const CELL_FORMATTING_CONTROL_NAME = 'talxis_clientapicellformatting';
-const CELL_CONTROL_PARAMETERS_CONTROL_NAME = 'talxis_clientapicellcontrolparameters';
-const CELL_CUSTOMIZER_CONTROL_NAME = 'talxis_clientapicellcustomizers';
-const CELL_ONE_CLICK_EDIT_CONTROL_NAME = 'talxis_clientapicelloneclickedit';
-const CELL_CUSTOMIZER_ASYNC_CONTROL_NAME = 'talxis_clientapicellasynccustomizer';
+const MEMORY_PROVIDER_CONTROL_ID = 'talxis_memorybindingfield.fieldControl';
+const MEMORY_PROVIDER_ASYNC_LOADING_CONTROL_ID = 'talxis_clientapiasyncdataload.fieldControl';
+const ADDITIONAL_DATA_LOAD_CONTROL_ID = 'talxis_clientapiasyncadditionaldataload.fieldControl';
+const COLUMNS_INTERCEPTOR_CONTROL_ID = 'talxis_talxis_columnsinterceptorbindingfield.fieldControl';
+const DYNAMIC_CELL_VALUES_CONTROL_ID = 'talxis_clientapidynamiccellvalues.fieldControl';
+const CELL_VALIDATION_CONTROL_ID = 'talxis_clientapicellvalidation.fieldControl';
+const CELL_DISABLING_CONTROL_ID = 'talxis_clientapicelldisabling.fieldControl';
+const CELL_NOTIFICATIONS_CONTROL_ID = 'talxis_clientapicellnotifications.fieldControl';
+const CELL_LOADING_CONTROL_ID = 'talxis_clientapicellloading.fieldControl';
+const INLINE_RIBBON_CONTROL_ID = 'talxis_clientapiinlineribbon.fieldControl';
+const CELL_FORMATTING_CONTROL_ID = 'talxis_clientapicellformatting.fieldControl';
+const CELL_CONTROL_PARAMETERS_CONTROL_ID = 'talxis_clientapicellcontrolparameters.fieldControl';
+const CELL_CUSTOMIZER_CONTROL_ID = 'talxis_clientapicellcustomizers.fieldControl';
+const CELL_ONE_CLICK_EDIT_CONTROL_ID = 'talxis_clientapicelloneclickedit.fieldControl';
+const CELL_CUSTOMIZER_ASYNC_CONTROL_ID = 'talxis_clientapicellasynccustomizer.fieldControl';
 const ADVANCED_GRID_CONTROL_NAME = 'Subgrid_new_1';
 const ADVANCED_GRID_CONTROL_NAME_FULL_TAB = 'Subgrid_new_2';
+const TALXIS_GRID_DEMO_1_VIEW_ID = '0b6cfae4-170b-f011-bae2-0022489b5e99';
+const TALXIS_GRID_DEMO_2_VIEW_ID = '9c330878-ad0b-f011-bae1-0022489b5e99';
+const TALXIS_GRID_DEMO_3_VIEW_ID = 'b73dfe2f-702a-f011-8c4d-0022489b5e99';
+const TALXIS_GRID_DEMO_3_CUSTOM_VIEW_ID = 'a4bb2b0c-7d2a-f011-8c4d-0022489b5e99';
 
 const CELL_CUSTOMIZER = {
     controls: [{
@@ -34,86 +41,226 @@ const CELL_CUSTOMIZER_ASYNC = {
     }]
 }
 
-function hideRibbonButton() {
-    return false;
-}
+function onDatasetControlInitialized(parameters) {
+    const { controlId, dataset } = parameters;
+    registerGeneralEvents(dataset);
 
-
-function onFormLoad(executionContext) {
-    const formContext = executionContext.getFormContext();
-
-    const memoryProviderControl = formContext.getControl(MEMORY_PROVIDER_CONTROL);
-    const columnsInterceptorControl = formContext.getControl(COLUMNS_INTERCEPTOR_CONTROL_NAME);
-    const dynamicCellValuesControl = formContext.getControl(DYNAMIC_CELL_VALUES_CONTROL_NAME);
-    const cellValidationControl = formContext.getControl(CELL_VALIDATION_CONTROL_NAME);
-    const cellDisablingControl = formContext.getControl(CELL_DISABLING_CONTROL_NAME);
-    const cellNotificationsControl = formContext.getControl(CELL_NOTIFICATIONS_CONTROL_NAME);
-    const cellLoadingControl = formContext.getControl(CELL_LOADING_CONTROL_NAME);
-    const cellFormattingControl = formContext.getControl(CELL_FORMATTING_CONTROL_NAME);
-    const cellControlParametersControl = formContext.getControl(CELL_CONTROL_PARAMETERS_CONTROL_NAME);
-    const cellCustomizerControl = formContext.getControl(CELL_CUSTOMIZER_CONTROL_NAME);
-    const cellOneClickEditControl = formContext.getControl(CELL_ONE_CLICK_EDIT_CONTROL_NAME);
-    const cellCustomizerAsyncControl = formContext.getControl(CELL_CUSTOMIZER_ASYNC_CONTROL_NAME);
-    const talxisGridControl = formContext.getControl(ADVANCED_GRID_CONTROL_NAME);
-    const talxisGridControlFullTab = formContext.getControl(ADVANCED_GRID_CONTROL_NAME_FULL_TAB);
-
-    registerControl(memoryProviderControl, [registerGeneralEvents]);
-    registerControl(columnsInterceptorControl, [registerGeneralEvents, registerColumnsInterceptorEvents])
-    registerControl(dynamicCellValuesControl, [registerGeneralEvents, registerDynamicCellValuesEvents]);
-    registerControl(cellValidationControl, [registerGeneralEvents, registerDynamicCellValuesEvents, registerValidationEvents])
-    registerControl(cellDisablingControl, [registerGeneralEvents, registerCellDisabledEvents])
-    registerControl(cellNotificationsControl, [registerGeneralEvents, registerCellNotificationsEvents])
-    registerControl(cellLoadingControl, [registerGeneralEvents, registerCellLoadingEvents]);
-    registerControl(cellFormattingControl, [registerGeneralEvents, registerCellFormattingEvents])
-    registerControl(cellControlParametersControl, [registerGeneralEvents, registerDynamicCellValuesEvents, registerCellControlParametersEvents]);
-    registerControl(cellCustomizerControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER)]);
-    registerControl(cellOneClickEditControl, [registerGeneralEvents, registerCellOneClickEditEvents]);
-    registerControl(cellCustomizerAsyncControl, [registerGeneralEvents, (dataset) => registerCellFormattingEvents(dataset, CELL_CUSTOMIZER_ASYNC, false), registerAsyncCellRendererEvents])
-    registerControl(talxisGridControl, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events, registerTalxisGridDemo3Events]);
-    registerControl(talxisGridControlFullTab, [registerTalxisGridDemo1Events, registerTalxisGridDemo2Events, registerTalxisGridDemo3Events]);
-
-}
-
-function onMainGridLoad(primaryControl) {
-    const viewId = sanitizeGuid(primaryControl.getViewSelector().getCurrentView().id);
-    const dataset = window.Xrm[`talxis_grid_${primaryControl.getGrid().pageId}`];
-    if (viewId === '0b6cfae4-170b-f011-bae2-0022489b5e99') {
-        registerTalxisGridDemo1Events(dataset);
-    }
-    if (viewId === '9c330878-ad0b-f011-bae1-0022489b5e99') {
-        registerTalxisGridDemo2Events(dataset);
-    }
-    if (viewId === 'b73dfe2f-702a-f011-8c4d-0022489b5e99') {
-        registerTalxisGridDemo3Events(dataset);
-    }
-    if (viewId === 'a4bb2b0c-7d2a-f011-8c4d-0022489b5e99') {
-        registerTalxisGridDemo3Events(dataset, true);
-    }
-}
-
-const registerControl = (control, registerCallbacks) => {
-    control.addOnOutputChange(() => {
-        const isDatasetControl = control.getControlType().startsWith('customsubgrid:');
-        const dataset = control.getOutputs()[`${control.getName()}${isDatasetControl ? '' : '.fieldControl'}.DatasetControl`].value;
-
-        if (isDatasetControl) {
-            const viewId = sanitizeGuid(control.getViewSelector?.().getCurrentView().id);
-            if (viewId === '0b6cfae4-170b-f011-bae2-0022489b5e99') {
-                registerCallbacks[0](dataset);
-            }
-            if (viewId === '9c330878-ad0b-f011-bae1-0022489b5e99') {
-                registerCallbacks[1](dataset);
-            }
-            if (viewId === 'b73dfe2f-702a-f011-8c4d-0022489b5e99') {
-                registerCallbacks[2](dataset);
-            }
-            if (viewId === 'a4bb2b0c-7d2a-f011-8c4d-0022489b5e99') {
-                registerCallbacks[2](dataset, true);
-            }
-            return;
+    switch (controlId) {
+        case MEMORY_PROVIDER_CONTROL_ID: {
+            // Only general events registered
+            break;
         }
-        registerCallbacks.map(callback => callback(dataset))
+        case MEMORY_PROVIDER_ASYNC_LOADING_CONTROL_ID: {
+            registerMemoryProviderAsyncLoadEvents(dataset);
+            break;
+        }
+        case ADDITIONAL_DATA_LOAD_CONTROL_ID: {
+            registerAdditionalDataLoadEvents(dataset);
+            break;
+        }
+        case COLUMNS_INTERCEPTOR_CONTROL_ID: {
+            registerColumnsInterceptorEvents(dataset);
+            break;
+        }
+        case DYNAMIC_CELL_VALUES_CONTROL_ID: {
+            registerDynamicCellValuesEvents(dataset);
+            break;
+        }
+        case CELL_VALIDATION_CONTROL_ID: {
+            registerDynamicCellValuesEvents(dataset);
+            registerValidationEvents(dataset);
+            break;
+        }
+        case CELL_DISABLING_CONTROL_ID: {
+            registerCellDisabledEvents(dataset);
+            break;
+        }
+        case CELL_NOTIFICATIONS_CONTROL_ID: {
+            registerCellNotificationsEvents(dataset);
+            break;
+        }
+        case CELL_LOADING_CONTROL_ID: {
+            registerCellLoadingEvents(dataset);
+            break;
+        }
+        case CELL_FORMATTING_CONTROL_ID: {
+            registerCellFormattingEvents(dataset);
+            break;
+        }
+        case CELL_CONTROL_PARAMETERS_CONTROL_ID: {
+            registerDynamicCellValuesEvents(dataset);
+            registerCellControlParametersEvents(dataset);
+            break;
+        }
+        case CELL_CUSTOMIZER_CONTROL_ID: {
+            registerCellFormattingEvents(dataset, CELL_CUSTOMIZER);
+            break;
+        }
+        case CELL_ONE_CLICK_EDIT_CONTROL_ID: {
+            registerCellOneClickEditEvents(dataset);
+            break;
+        }
+        case INLINE_RIBBON_CONTROL_ID: {
+            registerInlineRibbonEvents(dataset);
+            break;
+        }
+        case CELL_CUSTOMIZER_ASYNC_CONTROL_ID: {
+            registerCellFormattingEvents(dataset, CELL_CUSTOMIZER_ASYNC, false);
+            registerAsyncCellRendererEvents(dataset);
+            break;
+        }
+        case TALXIS_GRID_DEMO_1_VIEW_ID: {
+            registerTalxisGridDemo1Events(dataset);
+            break;
+        }
+        case TALXIS_GRID_DEMO_2_VIEW_ID: {
+            registerTalxisGridDemo2Events(dataset);
+            break;
+        }
+        case TALXIS_GRID_DEMO_3_VIEW_ID: {
+            registerTalxisGridDemo3Events(dataset);
+            break;
+        }
+        case TALXIS_GRID_DEMO_3_CUSTOM_VIEW_ID: {
+            registerTalxisGridDemo3Events(dataset, true);
+            break;
+        }
+        default: {
+            console.log(`Unknown control ID: ${controlId}`);
+            break;
+        }
+    }
+}
+
+const registerInlineRibbonEvents = (dataset) => {
+    dataset.setInterceptor('columns', (columns) => {
+        const newColumnsMap = getDemoColumnsMap(columns);
+        newColumnsMap.set('', {
+            ...newColumnsMap.get('_talxis_gridRibbonButtons'),
+            isHidden: false,
+            name: '_talxis_gridRibbonButtons',
+            dataType: "SingleLine.Text"
+        })
+        return [...newColumnsMap.values()];
+    });
+    dataset.setInterceptor('onRetrieveRecordCommand', async (options, defaultAction) => {
+        const commands = await defaultAction(options);
+        const isGroup = options.recordIds.length === 1 && options.recordIds[0].startsWith('group_');
+        const topButton = {
+            "canExecute": true,
+            "commandButtonId": "Custom.Button",
+            "shouldBeVisible": true,
+            "tooltip": "Custom Button",
+            "commandId": "Custom.Command",
+            "label": "Custom Button",
+            "icon": "Heart",
+            "children": [],
+            "controlType": "",
+            execute: () => alert('Custom Button clicked!')
+        }
+        const inlineButton = {
+            "canExecute": true,
+            "commandButtonId": "CustomInline.Button",
+            "shouldBeVisible": true,
+            "tooltip": "Custom Button",
+            "commandId": "CustomInline.Command",
+            "label": `Custom Inline Button${isGroup ? ' (Group)' : ''}`,
+            "icon": "Heart",
+            "children": [],
+            "controlType": "",
+            execute: () => alert('Custom Inline Button clicked!')
+        }
+        return [
+            ...(!options.isInline ? [topButton] : [inlineButton]),
+            ...commands
+        ];
     })
+}
+
+const registerAdditionalDataLoadEvents = (dataset) => {
+    const ADDITIONAL_DATA_FOR_PAGE = new Map();
+    dataset.setColumns([
+        dataset.columns[0],
+        {
+            name: 'additional_info',
+            displayName: 'Additional Async Data',
+            isVirtual: true,
+            dataType: 'SingleLine.Text',
+            visualSizeFactor: 200,
+        }
+    ]);
+    dataset.addEventListener('onNewDataLoaded', () => {
+        ADDITIONAL_DATA_FOR_PAGE.clear();
+        //fake loading
+        setTimeout(() => {
+            const currentPageRecordIds = dataset.sortedRecordIds;
+            currentPageRecordIds.map((id) => {
+                ADDITIONAL_DATA_FOR_PAGE.set(id, `Additional data for record ${id}`);
+            });
+            //request render so expressions are re-evaluated
+            dataset.render();
+        }, 3000);
+    });
+    dataset.addEventListener('onRecordLoaded', async (record) => {
+        record.expressions.ui.setLoadingExpression('additional_info', () => {
+            return !ADDITIONAL_DATA_FOR_PAGE.has(record.getRecordId());
+        });
+        record.expressions.setValueExpression('additional_info', () => {
+            return ADDITIONAL_DATA_FOR_PAGE.get(record.getRecordId()) ?? null;
+        });
+    });
+};
+
+const registerMemoryProviderAsyncLoadEvents = (dataset) => {
+    dataset.setInterceptor('onFirstDataLoad', async (parameters, defaultAction) => {
+        dataset.setMetadata({ PrimaryIdAttribute: 'id', DisplayCollectionName: 'Posts' });
+        dataset.setColumns([
+            {
+                name: 'id',
+                displayName: 'ID',
+                dataType: 'SingleLine.Text',
+                visualSizeFactor: 80,
+                metadata: {
+                    IsValidForUpdate: false,
+                }
+            },
+            {
+                name: 'title',
+                displayName: 'Title',
+                isPrimary: true,
+                dataType: 'SingleLine.Text',
+                visualSizeFactor: 300,
+            },
+            {
+                name: 'body',
+                displayName: 'Content',
+                dataType: 'Multiple',
+                visualSizeFactor: 400,
+            }
+        ]);
+        try {
+            //simulate delay to showcase loading indicator
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(undefined);
+                }, 3000);
+            })
+            const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+            const posts = await response.json();
+
+            // Transform JSONPlaceholder data to match expected format
+            const transformedData = posts.map(post => ({
+                id: post.id.toString(),
+                title: post.title,
+                body: post.body
+            }));
+
+            dataset.setDataSource(transformedData);
+        } catch (error) {
+            console.error('Failed to fetch data from JSONPlaceholder:', error);
+            dataset.setDataSource([]);
+        }
+    });
 }
 
 const registerColumnsInterceptorEvents = (dataset) => {
@@ -133,6 +280,7 @@ const registerColumnsInterceptorEvents = (dataset) => {
             displayName: `Interceptor MultiSelectOptionSet ${getEmojiFromString()}`,
             disableSorting: true,
             metadata: {
+                ...newColumnsMap.get('interceptor_column')?.metadata,
                 IsValidForUpdate: true,
                 CanBeGrouped: true,
                 OptionSet: [{
@@ -276,7 +424,7 @@ const registerCellFormattingEvents = (dataset, overrides, useCustomFormatting = 
             if (column.grouping?.isGrouped && summarizationType === 'grouping') {
                 columnName = column.grouping.alias;
             }
-            else if(column.aggregation?.aggregationFunction && summarizationType === 'aggregation') {
+            else if (column.aggregation?.aggregationFunction && summarizationType === 'aggregation') {
                 columnName = column.aggregation.alias;
             }
             const value = record.getValue(columnName);
@@ -417,7 +565,6 @@ const registerCellNotificationsEvents = (dataset) => {
                     actions: [() => {
                         const value = record.getValue('decimal') ?? 0;
                         record.setValue('decimal', value + 1);
-                        dataset.render();
                     }]
                 }]
             },
@@ -432,7 +579,6 @@ const registerCellNotificationsEvents = (dataset) => {
                     actions: [() => {
                         const value = record.getValue('decimal') ?? 0;
                         record.setValue('decimal', value - 1);
-                        dataset.render();
                     }]
                 }]
             }
@@ -560,44 +706,32 @@ const registerAsyncCellRendererEvents = (dataset) => {
             }
             return false;
         });
-        record.expressions.ui.setLoadingExpression("color", () => {
-            if (!cache.get(record.getRecordId())) {
-                return true;
-            }
-            return false;
-        });
     });
 }
 
 const registerGeneralEvents = (dataset) => {
-    let saveResults = [];
-    dataset.addEventListener('onRecordSave', (record) => {
-        saveResults.push(JSON.stringify({
-            [record.getRecordId()]: record.getChanges()
-        }));
-        setTimeout(() => {
-            if (saveResults.length === 0) {
-                return;
-            }
-            Xrm.Navigation.openAlertDialog({
-                title: `onRecordSave (will not be saved to the data source in this demo)`,
-                text: `Changed Records: ${JSON.stringify(saveResults)}`
-            })
-            saveResults = [];
-        }, 0);
-    })
-    dataset.addEventListener('onDatasetItemOpened', (entityReference) => {
+    return;
+    dataset.addEventListener('onAfterSaved', (result) => {
         Xrm.Navigation.openAlertDialog({
-            title: `onDatasetItemOpened`,
-            text: `Opening record ${entityReference.name}`
-        })
+            title: `Save result`,
+            text: `Saved Records: ${JSON.stringify(result)}`
+        });
+    })
+    dataset.addEventListener('onAfterRecordSaved', (result) => {
+        console.log(`Record ${result.recordId} saved with result: ${result.success}`)
+    })
+    dataset.setInterceptor('onOpenDatasetItem', async (entityReference, defaultAction) => {
+        await Xrm.Navigation.openAlertDialog({
+            title: `onDatasetItemOpened interceptor`,
+            text: `Opening record ${entityReference.name}. Close this dialog to proceed.`
+        });
+        return defaultAction(entityReference);
     })
     dataset.addEventListener('onRecordsSelected', (ids) => {
         console.log(`Selected record ids: ${ids}`);
     })
     dataset.addEventListener('onRecordColumnValueChanged', (record, columnName) => {
-        console.log(`${record.getRecordId()}_${columnName}, New value: ${record.getValue(columnName)}
-        `)
+        console.log(`${record.getRecordId()}_${columnName}, New value: ${record.getValue(columnName)}`)
     })
 }
 
