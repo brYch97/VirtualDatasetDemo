@@ -25,7 +25,7 @@ const CELL_CUSTOMIZER = {
         appliesTo: 'editor',
         name: 'talxis_TALXIS.PCF.ColorPicker',
         bindings: {
-            ShouldStopEditWhenOutputChanges: {
+            ShouldUnmountWhenOutputChanges: {
                 value: false,
                 dataType: 'TwoOptions'
             }
@@ -710,7 +710,6 @@ const registerAsyncCellRendererEvents = (dataset) => {
 }
 
 const registerGeneralEvents = (dataset) => {
-    return;
     dataset.addEventListener('onAfterSaved', (result) => {
         Xrm.Navigation.openAlertDialog({
             title: `Save result`,
