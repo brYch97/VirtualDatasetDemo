@@ -1,0 +1,1 @@
+This demo serves as an example of extensibility for [Virtual Dataset](https://docs.talxis.com/en/developer-guide/applications/controls/VirtualDataset/general/) and [Grid](https://docs.talxis.com/en/developer-guide/applications/controls/grid/) controls.
