@@ -41,6 +41,10 @@ const CELL_CUSTOMIZER_ASYNC = {
     }]
 }
 
+function onLoad() {
+    
+}
+
 function onDatasetControlInitialized(parameters) {
     const { controlId, dataset } = parameters;
     registerGeneralEvents(dataset);
