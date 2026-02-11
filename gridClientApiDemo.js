@@ -41,15 +41,6 @@ const CELL_CUSTOMIZER_ASYNC = {
     }]
 }
 
-let _resolveFormContext = null;
-const formContextPromise = new Promise((resolve) => {
-    _resolveFormContext = resolve;
-})
-
-function onLoad(formContext) {
-    _resolveFormContext(formContext);
-}
-
 function onDatasetControlInitialized(parameters) {
     const { controlId, dataset } = parameters;
     registerGeneralEvents(dataset);
@@ -139,10 +130,6 @@ function onDatasetControlInitialized(parameters) {
             break;
         }
     }
-    (async () => {
-        const formContext = await formContextPromise;
-        console.log(formContext);
-    })();
 }
 
 const registerInlineRibbonEvents = (dataset) => {
