@@ -42,7 +42,7 @@ const CELL_CUSTOMIZER_ASYNC = {
 }
 
 function onLoad() {
-    
+
 }
 
 function onDatasetControlInitialized(parameters) {
@@ -758,9 +758,9 @@ const registerTalxisGridDemo1Events = (dataset) => {
             visualSizeFactor: 400,
             isVirtual: true
         })
-        columnsMap.set('talxis_singlelinephone', {
-            ...columnsMap.get('talxis_singlelinephone'),
-            displayName: 'SingleLine.Phone (Custom PCF)'
+        columnsMap.set('talxis_color', {
+            ...columnsMap.get('talxis_color'),
+            displayName: 'Color (Custom PCF)'
         })
         //always keep the columns at the end
         return [...columnsMap.values()].sort((a, b) => {
@@ -798,36 +798,31 @@ const registerTalxisGridDemo1Events = (dataset) => {
                 backgroundColor: getColorBasedOnValue(getNumber(value), theme),
             }
         })
-        record.expressions.ui.setCustomControlsExpression('talxis_singlelinephone', (controls) => {
+        record.expressions.ui.setCustomControlsExpression('talxis_color', (controls) => {
             return [{
                 appliesTo: "editor",
-                name: "talxis_TALXIS.PCF.PhonePicker",
+                name: "talxis_TALXIS.PCF.ColorPicker",
                 bindings: {
-                    verificationFeature: {
-                        isStatic: true,
-                        value: "1"
+                    ShouldUnmountWhenOutputChanges: {
+                        value: false,
+                        dataType: 'TwoOptions'
                     }
                 }
             }]
         })
-        record.expressions.setFormattedValueExpression('talxis_singlelinephone', defaultFormattedValue => {
-            if (!defaultFormattedValue) {
-                return defaultFormattedValue;
+        record.expressions.ui.setCustomFormattingExpression("talxis_color", () => {
+            const column = dataset.getDataProvider().getColumnsMap()['talxis_color'];
+            let color = record.getValue('talxis_color');
+            if (column.grouping?.isGrouped) {
+                color = record.getValue(column.grouping.alias);
             }
-            return JSON.parse(defaultFormattedValue).phoneNumber;
-        });
-        record.expressions.ui.setControlParametersExpression('talxis_singlelinephone', (defaultParameters) => {
-            if (!defaultParameters.value.raw) {
-                return defaultParameters
+            if (!color?.startsWith('#')) {
+                return undefined;
             }
             return {
-                ...defaultParameters,
-                value: {
-                    ...defaultParameters.value,
-                    raw: JSON.parse(defaultParameters.value.raw).phoneNumber
-                }
-            }
-        })
+                backgroundColor: color
+            };
+        });
     })
 }
 
